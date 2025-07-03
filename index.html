@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to Prasanth's Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container, .uploader {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    img.profile {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 2px solid white;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 14px;
+      margin: 10px 0 20px;
+    }
+
+    button {
+      padding: 12px 22px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background-color: #0077ff;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      margin: 10px;
+    }
+
+    button:hover {
+      background-color: #005ecc;
+      transform: scale(1.05);
+    }
+
+    .footer a {
+      color: white;
+      margin: 0 8px;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #ffd700;
+    }
+
+    input[type="file"], textarea {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    textarea {
+      height: 100px;
+      margin-top: 20px;
+    }
+
+    .gallery img {
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+      border-radius: 8px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid white;
+    }
+
+    .file-list a {
+      display: block;
+      margin: 4px 0;
+      font-size: 13px;
+      text-decoration: underline;
+      color: white;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="loginContainer">
+    <img src="https://i.imgur.com/6VBx3io.png" alt="Prasanth's Profile" class="profile" />
+    <h1>Welcome to Prasanth's Site</h1>
+    <p>🚀 Powered by Google Drive & Firebase</p>
+    <p>Site Owner: <strong>Prasanth</strong></p>
+    <button onclick="loginWithGoogle()">Sign in with Google</button>
+    <div class="footer">
+      <p>🔗 Connect with Prasanth:</p>
+      <a href="https://github.com/prasanth252005" target="_blank">GitHub</a>
+      <a href="https://instagram.com/prasanth252005" target="_blank">Instagram</a>
+      <a href="https://linkedin.com/in/prasanth252005" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+
+  <div class="uploader" id="appContainer" style="display:none;">
+    <h2>📤 Upload File to Google Drive</h2>
+    <input type="file" id="fileInput" /><br />
+    <button onclick="uploadFile()">⬆️ Upload</button>
+    <button onclick="logout()">🔓 Logout</button>
+    <p id="status"></p>
+
+    <h3>🖼️ Images</h3>
+    <div class="gallery" id="gallery"></div>
+
+    <h3>📂 Files</h3>
+    <div class="file-list" id="fileList"></div>
+
+    <h3>📝 Notes</h3>
+    <textarea id="notes" placeholder="Write your notes here..."></textarea>
+  </div>
+
+  <!-- Firebase + Google -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCo5Rv_WG_5vFwXZ0EPD5ZqNjvvJhEyoTc",
+      authDomain: "prasanth-site.firebaseapp.com",
+      databaseURL: "https://prasanth-site-default-rtdb.firebaseio.com",
+      projectId: "prasanth-site",
+      storageBucket: "prasanth-site.firebasestorage.app",
+      messagingSenderId: "155768436390",
+      appId: "1:155768436390:web:1a4384ca0e927b240be667",
+      measurementId: "G-2PYJS7N4KP"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let userEmail = "", accessToken = null, tokenClient;
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        userEmail = user.email.replace(/\./g, "_");
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("appContainer").style.display = "block";
+        initOAuth();
+        loadUserData();
+      }
+    });
+
+    function loginWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).catch(err => alert(err.message));
+    }
+
+    function logout() {
+      firebase.auth().signOut().then(() => location.reload());
+    }
+
+    function initOAuth() {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: "108441946051-oc8kae5351ojn7evuphtlcj1f3eqv7o0.apps.googleusercontent.com",
+        scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email",
+        callback: tokenResp => { accessToken = tokenResp.access_token; }
+      });
+      tokenClient.requestAccessToken();
+    }
+
+    function uploadFile() {
+      if (!accessToken) return alert("Please connect to Google first.");
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return alert("Please choose a file.");
+
+      const metadata = { name: file.name, mimeType: file.type };
+      const form = new FormData();
+      form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+      form.append("file", file);
+
+      fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + accessToken },
+        body: form,
+      })
+      .then(res => res.json())
+      .then(response => {
+        const fileId = response.id;
+        const link = `https://drive.google.com/file/d/${fileId}/view`;
+
+        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ role: "reader", type: "anyone" })
+        }).then(() => {
+          document.getElementById("status").innerText = "✅ File uploaded!";
+          const fileObj = { name: file.name, link };
+          if (file.type.startsWith("image/")) {
+            addImagePreview(file.name, link);
+            saveFile("images", fileObj);
+          } else {
+            addFileLink(file.name, link);
+            saveFile("files", fileObj);
+          }
+        });
+      })
+      .catch(() => document.getElementById("status").innerText = "❌ Upload failed!");
+    }
+
+    function saveFile(type, file) {
+      const path = `users/${userEmail}/${type}`;
+      db.ref(path).once("value", snapshot => {
+        const current = snapshot.val() || [];
+        current.push(file);
+        db.ref(path).set(current);
+      });
+    }
+
+    function loadUserData() {
+      db.ref("users/" + userEmail).once("value", snapshot => {
+        const data = snapshot.val();
+        if (data?.images) data.images.forEach(f => addImagePreview(f.name, f.link));
+        if (data?.files) data.files.forEach(f => addFileLink(f.name, f.link));
+        if (data?.notes) document.getElementById("notes").value = data.notes;
+      });
+    }
+
+    function addImagePreview(name, link) {
+      const img = document.createElement("img");
+      img.src = link;
+      img.alt = name;
+      img.onclick = () => window.open(link, "_blank");
+      document.getElementById("gallery").appendChild(img);
+    }
+
+    function addFileLink(name, link) {
+      const a = document.createElement("a");
+      a.href = link;
+      a.target = "_blank";
+      a.textContent = name;
+      document.getElementById("fileList").appendChild(a);
+    }
+
+    document.getElementById("notes").addEventListener("input", e => {
+      if (userEmail) db.ref(`users/${userEmail}/notes`).set(e.target.value);
+    });
+  </script>
+</body>
+</html>
