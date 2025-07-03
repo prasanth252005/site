@@ -1,42 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>Prasanth's Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; }
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #4facfe, #00f2fe);
       color: white;
-      padding: 20px;
-      overflow-x: hidden;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
+
+    .fadeIn {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .slideUp {
+      animation: slideUp 0.8s ease-out;
+    }
+
     .centered {
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       min-height: 100vh;
       text-align: center;
-      animation: fadeIn 1s ease-in-out;
     }
-    .card, .upload-box {
+
+    .card {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      max-width: 600px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
       width: 90%;
-      margin: 20px auto;
-      animation: slideFade 1s ease-out;
     }
+
     h1, h2, p {
       margin: 10px 0;
     }
+
     button {
       padding: 12px 20px;
       margin: 10px 5px;
@@ -48,10 +59,12 @@
       cursor: pointer;
       transition: 0.3s;
     }
+
     button:hover {
       background-color: #005ecc;
       transform: scale(1.05);
     }
+
     img {
       width: 90px;
       height: 90px;
@@ -59,229 +72,275 @@
       margin-bottom: 15px;
       border: 2px solid white;
     }
+
     .social a {
       color: white;
       margin: 0 10px;
       text-decoration: none;
       font-weight: bold;
     }
-    .social a:hover { color: #ffd700; }
+
+    .social a:hover {
+      color: #ffd700;
+    }
+
+    #appContainer {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .upload-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 1200px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
     .lower-section {
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 30px;
-    }
-    .box {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 15px;
+      width: 100%;
       flex: 1;
-      min-width: 250px;
-      max-height: 300px;
+      max-width: 1200px;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .box {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 15px;
       overflow-y: auto;
     }
+
     .gallery img {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      margin: 5px;
+      width: 80px;
+      height: 80px;
       object-fit: cover;
-      cursor: pointer;
+      margin: 5px;
+      border-radius: 8px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
     }
+
+    .gallery img:hover {
+      transform: scale(1.1);
+    }
+
     .file-list a {
-      display: block;
       color: white;
-      margin-bottom: 5px;
-      font-size: 14px;
-      text-decoration: underline;
+      display: block;
+      margin: 5px 0;
     }
+
     textarea {
       width: 100%;
-      height: 120px;
-      padding: 10px;
+      height: 200px;
       border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
       border: none;
       resize: none;
     }
-    @keyframes slideFade {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .lower-section {
+        flex-direction: column;
+      }
     }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 </head>
-<body>
-  <div class="centered" id="loginContainer">
-    <div class="card">
-      <img src="https://i.imgur.com/6VBx3io.png" alt="Prasanth">
-      <h1>Welcome to Prasanth's Site</h1>
-      <p>🚀 Powered by Google Drive & Firebase</p>
-      <p>Site Owner: <strong>Prasanth</strong></p>
-      <p>Connect with me:</p>
-      <div class="social">
-        <a href="https://github.com/prasanth252005" target="_blank">GitHub</a>
-        <a href="https://instagram.com/prasanth252005" target="_blank">Instagram</a>
-        <a href="https://linkedin.com/in/prasanth252005" target="_blank">LinkedIn</a>
-      </div>
-      <button onclick="loginWithGoogle()">Sign in with Google</button>
-    </div>
-  </div>
+<body class="fadeIn">
 
-  <div class="upload-box" id="appContainer" style="display:none;">
+<!-- LOGIN SCREEN -->
+<div id="loginContainer" class="centered slideUp">
+  <div class="card">
+    <img src="https://i.imgur.com/6VBx3io.png" alt="Prasanth" />
+    <h1>Welcome to Prasanth's Site</h1>
+    <p>🚀 Powered by Google Drive & Firebase</p>
+    <p>Site Owner: <strong>Prasanth</strong></p>
+    <div class="social">
+      <a href="https://github.com/prasanth252005" target="_blank">GitHub</a>
+      <a href="https://instagram.com/prasanth252005" target="_blank">Instagram</a>
+      <a href="https://linkedin.com/in/prasanth252005" target="_blank">LinkedIn</a>
+    </div>
+    <button onclick="loginWithGoogle()">Sign in with Google</button>
+  </div>
+</div>
+
+<!-- APP UPLOADER SCREEN -->
+<div id="appContainer" class="fadeIn">
+  <div class="upload-box">
     <h2>📤 Upload File to Google Drive</h2>
-    <input type="file" id="fileInput" /><br>
+    <input type="file" id="fileInput" /><br />
     <button onclick="connectToGoogle()">Connect Google</button>
     <button onclick="uploadFile()">Upload</button>
     <button onclick="logout()">Logout</button>
     <p id="status"></p>
-    <div class="lower-section">
-      <div class="box">
-        <h3>🖼️ Images</h3>
-        <div class="gallery" id="gallery"></div>
-      </div>
-      <div class="box">
-        <h3>📂 Files</h3>
-        <div class="file-list" id="fileList"></div>
-      </div>
-      <div class="box">
-        <h3>📝 Notes</h3>
-        <textarea id="notes"></textarea>
-      </div>
+  </div>
+  <div class="lower-section">
+    <div class="box">
+      <h3>🖼️ Images</h3>
+      <div class="gallery" id="gallery"></div>
+    </div>
+    <div class="box">
+      <h3>📂 Files</h3>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <div class="box">
+      <h3>📝 Notes</h3>
+      <textarea id="notes"></textarea>
     </div>
   </div>
+</div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCo5Rv_WG_5vFwXZ0EPD5ZqNjvvJhEyoTc",
-      authDomain: "prasanth-site.firebaseapp.com",
-      databaseURL: "https://prasanth-site-default-rtdb.firebaseio.com",
-      projectId: "prasanth-site",
-      storageBucket: "prasanth-site.firebasestorage.app",
-      messagingSenderId: "155768436390",
-      appId: "1:155768436390:web:1a4384ca0e927b240be667"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let userEmail = "", accessToken = null, tokenClient;
+<!-- Firebase and Google APIs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        userEmail = user.email.replace(/\./g, '_');
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("appContainer").style.display = "block";
-        initOAuth();
-        loadUserData();
-      }
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCo5Rv_WG_5vFwXZ0EPD5ZqNjvvJhEyoTc",
+    authDomain: "prasanth-site.firebaseapp.com",
+    databaseURL: "https://prasanth-site-default-rtdb.firebaseio.com",
+    projectId: "prasanth-site",
+    storageBucket: "prasanth-site.firebasestorage.app",
+    messagingSenderId: "155768436390",
+    appId: "1:155768436390:web:1a4384ca0e927b240be667"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  let userEmail = "", accessToken = null, tokenClient;
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      userEmail = user.email.replace(/\./g, '_');
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("appContainer").style.display = "flex";
+      initOAuth();
+      loadUserData();
+    }
+  });
+
+  function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).catch(err => alert(err.message));
+  }
+
+  function logout() {
+    firebase.auth().signOut().then(() => location.reload());
+  }
+
+  function connectToGoogle() {
+    if (tokenClient) tokenClient.requestAccessToken();
+    else initOAuth();
+  }
+
+  function initOAuth() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: "108441946051-oc8kae5351ojn7evuphtlcj1f3eqv7o0.apps.googleusercontent.com",
+      scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email",
+      callback: tokenResp => { accessToken = tokenResp.access_token; document.getElementById("status").innerText = "✅ Connected to Google!"; }
     });
+  }
 
-    function loginWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider).catch(err => alert(err.message));
-    }
+  function uploadFile() {
+    if (!accessToken) return alert("Please connect to Google first.");
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return alert("Please choose a file.");
+    const metadata = { name: file.name, mimeType: file.type };
+    const form = new FormData();
+    form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+    form.append("file", file);
 
-    function logout() {
-      firebase.auth().signOut().then(() => location.reload());
-    }
-
-    function connectToGoogle() {
-      if (tokenClient) tokenClient.requestAccessToken();
-      else initOAuth();
-    }
-
-    function initOAuth() {
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: "108441946051-oc8kae5351ojn7evuphtlcj1f3eqv7o0.apps.googleusercontent.com",
-        scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email",
-        callback: tokenResp => { accessToken = tokenResp.access_token; document.getElementById("status").innerText = "✅ Connected to Google!"; }
-      });
-    }
-
-    function uploadFile() {
-      if (!accessToken) return alert("Please connect to Google first.");
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) return alert("Please choose a file.");
-
-      const metadata = { name: file.name, mimeType: file.type };
-      const form = new FormData();
-      form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
-      form.append("file", file);
-
-      fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
+    fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + accessToken },
+      body: form,
+    })
+    .then(res => res.json())
+    .then(response => {
+      const fileId = response.id;
+      const link = `https://drive.google.com/file/d/${fileId}/view`;
+      fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
         method: "POST",
-        headers: { Authorization: "Bearer " + accessToken },
-        body: form,
-      })
-      .then(res => res.json())
-      .then(response => {
-        const fileId = response.id;
-        const link = `https://drive.google.com/file/d/${fileId}/view`;
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + accessToken,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ role: "reader", type: "anyone" })
-        }).then(() => {
-          document.getElementById("status").innerText = "✅ File uploaded!";
-          const fileObj = { name: file.name, link };
-          if (file.type.startsWith("image/")) {
-            addImagePreview(file.name, link);
-            saveFile("images", fileObj);
-          } else {
-            addFileLink(file.name, link);
-            saveFile("files", fileObj);
-          }
-        });
-      })
-      .catch(() => document.getElementById("status").innerText = "❌ Upload failed!");
-    }
-
-    function saveFile(type, file) {
-      const path = `users/${userEmail}/${type}`;
-      db.ref(path).once("value", snapshot => {
-        const current = snapshot.val() || [];
-        current.push(file);
-        db.ref(path).set(current);
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ role: "reader", type: "anyone" })
+      }).then(() => {
+        document.getElementById("status").innerText = "✅ File uploaded!";
+        const fileObj = { name: file.name, link };
+        if (file.type.startsWith("image/")) {
+          addImagePreview(file.name, link);
+          saveFile("images", fileObj);
+        } else {
+          addFileLink(file.name, link);
+          saveFile("files", fileObj);
+        }
       });
-    }
+    })
+    .catch(() => document.getElementById("status").innerText = "❌ Upload failed!");
+  }
 
-    function loadUserData() {
-      db.ref("users/" + userEmail).once("value", snapshot => {
-        const data = snapshot.val();
-        if (data?.images) data.images.forEach(f => addImagePreview(f.name, f.link));
-        if (data?.files) data.files.forEach(f => addFileLink(f.name, f.link));
-        if (data?.notes) document.getElementById("notes").value = data.notes;
-      });
-    }
-
-    function addImagePreview(name, link) {
-      const img = document.createElement("img");
-      img.src = link;
-      img.alt = name;
-      img.onclick = () => window.open(link, "_blank");
-      document.getElementById("gallery").appendChild(img);
-    }
-
-    function addFileLink(name, link) {
-      const a = document.createElement("a");
-      a.href = link;
-      a.target = "_blank";
-      a.textContent = name;
-      document.getElementById("fileList").appendChild(a);
-    }
-
-    document.getElementById("notes").addEventListener("input", e => {
-      if (userEmail) db.ref(`users/${userEmail}/notes`).set(e.target.value);
+  function saveFile(type, file) {
+    const path = `users/${userEmail}/${type}`;
+    db.ref(path).once("value", snapshot => {
+      const current = snapshot.val() || [];
+      current.push(file);
+      db.ref(path).set(current);
     });
-  </script>
+  }
+
+  function loadUserData() {
+    db.ref("users/" + userEmail).once("value", snapshot => {
+      const data = snapshot.val();
+      if (data?.images) data.images.forEach(f => addImagePreview(f.name, f.link));
+      if (data?.files) data.files.forEach(f => addFileLink(f.name, f.link));
+      if (data?.notes) document.getElementById("notes").value = data.notes;
+    });
+  }
+
+  function addImagePreview(name, link) {
+    const img = document.createElement("img");
+    img.src = link;
+    img.alt = name;
+    img.onclick = () => window.open(link, "_blank");
+    document.getElementById("gallery").appendChild(img);
+  }
+
+  function addFileLink(name, link) {
+    const a = document.createElement("a");
+    a.href = link;
+    a.target = "_blank";
+    a.textContent = name;
+    document.getElementById("fileList").appendChild(a);
+  }
+
+  document.getElementById("notes").addEventListener("input", e => {
+    if (userEmail) db.ref(`users/${userEmail}/notes`).set(e.target.value);
+  });
+</script>
 </body>
 </html>
